@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Nexus Chat — v3</title>
+  <!-- Ortak stiller -->
+  <link rel="stylesheet" href="styles.css">
+  <!-- Dark tema ve fullscreen override -->
+  <link rel="stylesheet" href="dashboard-dark.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo" aria-hidden="true"></div>
+      <div class="title">NEXUS CHAT</div>
+    </div>
+    <div class="session">
+      <span id="userState" class="muted">Guest</span>
+      <a id="loginLink" href="l0g1nhtmlls.html" class="btn">Login</a>
+      <button id="logoutBtn" class="btn hide">Logout</button>
+    </div>
+  </header>
+
+  <main class="layout">
+    <!-- SOL: Kullanıcılar & Kanallar -->
+    <aside class="sidebar card" id="leftPane">
+     
+
+      <div class="section-title" style="margin-top:16px">Channels</div>
+      <ul id="channelList" class="list">
+        <li><button class="item" data-kind="channel" data-id="public"># public</button></li>
+      </ul>
+    </aside>
+
+    <!-- ORTA: Mesaj Akışı -->
+    <section class="feed card">
+      <div class="feed-head">
+        <div id="conversationTitle" class="conv-title"># public</div>
+        <div id="conversationMeta" class="muted"></div>
+      </div>
+      <div id="messages" class="messages"></div>
+    </section>
+
+    <!-- SAĞ: Yazma Alanı -->
+    <aside class="composer card">
+      <div class="section-title">Compose</div>
+      <div class="muted" id="composeHint">Login required to send message.</div>
+      <textarea id="composerInput" class="input" placeholder="Write a message..." disabled></textarea>
+      <div class="row">
+        <select id="visibility" class="input" disabled>
+          <option value="public">Public</option>
+          <option value="dm">Direct Message</option>
+        </select>
+        <select id="dmTarget" class="input" disabled></select>
+        <button id="sendBtn" class="btn primary" disabled>Send</button>
+      </div>
+    </aside>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

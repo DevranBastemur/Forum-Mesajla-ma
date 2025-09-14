@@ -1,0 +1,100 @@
+/* === Dashboard Dark Theme & Fullscreen Overrides === */
+
+/* Ekranı doldurmak için */
+html, body { height: 100%; }
+body { background: #0f1115; }
+
+/* Koyu tema değişkenleri (styles.css’tekileri override eder) */
+:root{
+  --bg:#0f1115;
+  --ink:#e5e7eb;
+  --muted:#9aa3b2;
+  --card:#151821;
+  --brand:#8b7bff;           /* istersen eski rengi bırakabilirsin */
+  --ring:rgba(139,123,255,.25);
+  --shadow:0 10px 30px rgba(0,0,0,.35);
+  --border:#262b36;
+}
+
+/* Topbar koyu, saydam */
+.topbar{
+  background: rgba(15,17,21,.75);
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(10px);
+}
+
+/* Genel tipografi biraz büyük */
+body { color: var(--ink); font-size: 16.5px; }
+.conv-title { font-size: 1.1rem; }
+
+/* Kartlar ve düğmeler */
+.card{ background: var(--card); border-color: var(--border); box-shadow: var(--shadow); }
+.btn{ background:#1b1f2a; border-color: var(--border); color: var(--ink); }
+.btn:hover{ background:#202637; }
+.btn.primary{ background: var(--brand); color: #0b0b0e; border-color: transparent; }
+
+/* Sol menü öğeleri */
+.item{ background:#1b1f2a; border-color: var(--border); color:var(--ink); }
+.item:hover{ border-color:#3a4256; }
+
+/* Avatar / ayırıcılar */
+.avatar{ background:#1d2230; color:#a8b1c4; }
+.msg{ border-bottom:1px solid #1b2130; }
+.feed-head{ border-bottom:1px solid #1b2130; }
+.section-title{ color:#cbd5e1; }
+
+/* Yer tutucu hoş görüntü */
+input::placeholder, textarea::placeholder{ color:#778196; }
+
+/* Layout’u tam ekrana aç: genişliği aşma, paddings */
+.layout{
+  max-width: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 16px 20px;               /* kenarlardan nefes payı */
+  display: grid;
+  grid-template-columns: 320px 1fr 380px; /* daha geniş orta ve sağ */
+  gap: 20px;
+}
+@media (max-width: 1100px){
+  .layout{ grid-template-columns: 1fr; }
+}
+
+/* Mesaj listesi tam ekran yakını boyda olsun */
+.messages{
+  /* header yüksekliği (~56px) + üst/bottom paddings (~32px) ≈ ~88px
+     100vh - topbar(56) - layout padding(32) - feed-head(56) - welcome(opsiyonel ~44) ≈ hesap */
+  height: calc(100vh - 56px - 32px - 56px - 44px);
+  max-height: none;            /* styles.css’teki 64vh sınırını kaldır */
+  overflow: auto;
+  padding: 12px 16px;
+  font-size: 1.02rem;          /* biraz daha büyük yazı */
+  line-height: 1.55;
+}
+
+/* “welcome” bloğu karanlık uyumlu */
+.welcome{
+  padding:12px;
+  border-bottom:1px solid #1b2130;
+  background: #0f1115;         /* koyu arka plan */
+  color: var(--muted);
+}
+
+/* Composer alanı daha konforlu */
+.composer .input,
+#composerInput{
+  background:#0f131c;
+  border:1px solid var(--border);
+  color:var(--ink);
+}
+#composerInput{ min-height: 140px; }
+
+/* Input focus */
+.input:focus{ border-color: var(--brand); box-shadow: 0 0 0 4px var(--ring); }
+
+/* Chip/etiketler */
+.chip{ border-color:#30374a; color:#a8b1c4; }
+
+/* Linkler */
+a{ color:#b9c1ff; }
+a.btn{ color:inherit; }

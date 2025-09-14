@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Login — Nexus Chat</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="dashboard-dark.css"> <!-- DARK THEME -->
+  <style>
+    .center { min-height: 100dvh; display:grid; place-items:center; padding:16px }
+    .login-card { max-width:420px; width:100%; }
+    .error { color:#ef4444; font-size:.9rem; margin-top:6px; }
+  </style>
+</head>
+<body>
+  <div class="center">
+    <div class="card login-card" role="dialog" aria-labelledby="h3">
+      <div class="section-title" id="h3">Login</div>
+      <div style="padding:12px">
+        <label class="muted small">Username</label>
+        <input id="user" class="input" placeholder="e.g. Alice" autofocus>
+        <label class="muted small" style="margin-top:8px; display:block">Password</label>
+        <input id="pass" class="input" placeholder="Password" type="password">
+        <div id="errorMsg" class="error"></div>
+        <div class="row end" style="margin-top:10px">
+          <a href="index.html" class="btn">Cancel</a>
+          <button id="doLogin" class="btn primary">Login</button>
+        </div>
+        <div class="muted small" style="margin-top:10px">
+          Demo accounts:
+          <ul style="margin:6px 0 0 18px">
+            <li>Alice — <code>Pass!Alice42</code></li>
+            <li>Bob — <code>Pass!Bob42</code></li>
+            <li>Charlie — <code>Pass!Charlie42</code></li>
+            <li>Diana — <code>Pass!Diana42</code></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const USERS = [
+      { id:'u1', name:'Alice',   password:'Pass!Alice42' },
+      { id:'u2', name:'Bob',     password:'Pass!Bob42' },
+      { id:'u3', name:'Charlie', password:'Pass!Charlie42' },
+      { id:'u4', name:'Diana',   password:'Pass!Diana42' },
+    ];
+    const STORAGE_USER = 'nexus-chat-v3-user';
+
+    const $ = (s,el=document)=>el.querySelector(s);
+    const user = $('#user');
+    const pass = $('#pass');
+    const btn  = $('#doLogin');
+    const errorMsg = $('#errorMsg');
+
+    function login(){
+      const uName = user.value.trim();
+      const pWord = pass.value;
+      const found = USERS.find(u=> u.name.toLowerCase()===uName.toLowerCase() && u.password===pWord);
+
+      if(found){
+        localStorage.setItem(STORAGE_USER, JSON.stringify({id:found.id, name:found.name}));
+        window.location.href = 'dashboard.html';
+      } else {
+        errorMsg.textContent = "❌ Hatalı kullanıcı adı veya şifre";
+      }
+    }
+
+    btn.addEventListener('click', login);
+    pass.addEventListener('keydown', (e)=>{ if(e.key==='Enter') login(); });
+  </script>
+</body>
+</html>
