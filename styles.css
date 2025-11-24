@@ -55,7 +55,6 @@ body{margin:0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, R
 .btn{display:inline-flex; align-items:center; gap:.5rem; padding:.7rem 1rem; border-radius:12px; border:1px solid #e8e0d5; background:#fff; font-weight:700; cursor:pointer}
 .btn.primary{background:var(--brand); color:#fff; border-color:transparent}
 
-/* ek: küçük ikon buton */
 .icon-btn{
   border:1px solid #eadfce; border-radius:10px; padding:4px 8px; cursor:pointer;
   background:#fff; font-size:.78rem;
