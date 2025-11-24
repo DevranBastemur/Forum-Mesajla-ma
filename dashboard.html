@@ -5,9 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Dashboard — Nexus Chat</title>
 
-  <!-- Ortak stil -->
   <link rel="stylesheet" href="styles.css">
-  <!-- Dashboard’a özel koyu tema / fullscreen -->
   <link rel="stylesheet" href="dashboard-dark.css">
 </head>
 <body>
@@ -25,7 +23,6 @@
   </header>
 
   <main class="layout">
-    <!-- SOL: Kişiler + Kısayollar -->
     <aside class="sidebar card" id="leftPane">
       <div class="section-title">My Space</div>
       <ul class="list">
@@ -37,7 +34,6 @@
       <ul id="userList" class="list"></ul>
     </aside>
 
-    <!-- ORTA: Akış -->
     <section class="feed card">
       <div class="welcome" id="welcome"></div>
       <div class="feed-head">
@@ -47,7 +43,6 @@
       <div id="messages" class="messages"></div>
     </section>
 
-    <!-- SAĞ: Yazma Alanı -->
     <aside class="composer card">
       <div class="section-title">Compose</div>
       <div class="muted" id="composeHint">Choose Public or Direct Message.</div>
@@ -63,7 +58,6 @@
     </aside>
   </main>
 
-  <!-- Şifre Değiştirme Modalı -->
   <div class="modal-backdrop hide" id="passModal">
     <div class="modal" role="dialog" aria-labelledby="passTitle">
       <h3 id="passTitle">Change Password</h3>
@@ -84,7 +78,6 @@
     </div>
   </div>
 
-  <!-- ÖNEMLİ: dashboard, app.js'i kullanır -->
   <script src="app.js"></script>
 </body>
 </html>
