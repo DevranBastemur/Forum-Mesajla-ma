@@ -1,22 +1,14 @@
-// =====================
-// Nexus Chat v3 — app.js
-// (public-first + DM + delete + change password + GUEST can post to public)
-// =====================
 
-const STORAGE_USER  = 'nexus-chat-v3-user';    // {id,name}
-const STORAGE_DB    = 'nexus-chat-v3-store';   // mesajlar
-const STORAGE_USERS = 'nexus-chat-users';      // kullanıcı listesi (parolalarla)
-
-// ---- Varsayılan kullanıcılar (parolalı) ----
+const STORAGE_USER  = 'nexus-chat-v3-user';    
+const STORAGE_DB    = 'nexus-chat-v3-store';   
+const STORAGE_USERS = 'nexus-chat-users';      
 const DEFAULT_USERS = [
   { id:'u1', name:'Alice',   password:'Pass!Alice42' },
   { id:'u2', name:'Bob',     password:'Pass!Bob42' },
   { id:'u3', name:'Charlie', password:'Pass!Charlie42' },
   { id:'u4', name:'Diana',   password:'Pass!Diana42' },
-  // Guest kullanıcıyı listede TUTMUYORUZ; gönderim sırasında dinamik ekleyeceğiz
 ];
 
-// ---- Kullanıcı deposu (kalıcı) ----
 function loadUsers(){
   const raw = localStorage.getItem(STORAGE_USERS);
   return raw ? JSON.parse(raw) : DEFAULT_USERS.slice();
@@ -26,11 +18,9 @@ function saveUsers(users){
 }
 let USERS = loadUsers();
 
-// ---- Durum ----
-let currentUser = null; // {id, name} veya null
-let currentConversation = { type:'channel', id:'public' }; // başlangıç: public
+let currentUser = null;
+let currentConversation = { type:'channel', id:'public' };
 
-// ---- Yardımcılar ----
 function msg(authorId, text, scope){
   return {
     id: 'm' + Date.now() + Math.random().toString(16).slice(2),
@@ -46,11 +36,9 @@ function escapeHtml(s){
   }[m]));
 }
 
-// ---- Başlangıç verisi ----
 const seed = {
   channels: {
     public: [
-    // İlk tohum mesajları istersen sil
       msg('u1', 'Welcome to Nexus Chat. This room is public.', 'public'),
       msg('u2', 'Anyone can read messages here without login.', 'public'),
     ],
@@ -62,7 +50,6 @@ const seed = {
   }
 };
 
-// ---- Mesaj deposu ----
 function loadDB(){
   const raw = localStorage.getItem(STORAGE_DB);
   const db  = raw ? JSON.parse(raw) : seed;
@@ -74,7 +61,6 @@ function loadDB(){
 function saveDB(db){ localStorage.setItem(STORAGE_DB, JSON.stringify(db)); }
 let DB = loadDB();
 
-// ---- Kısa seçiciler ----
 const $  = (s,el=document)=>el.querySelector(s);
 const $$ = (s,el=document)=>Array.from(el.querySelectorAll(s));
 
@@ -93,7 +79,6 @@ const userState     = $('#userState');
 const loginLink     = $('#loginLink');
 const logoutBtn     = $('#logoutBtn');
 
-// Change Password modal elemanları (dashboard için)
 const changeBtn     = $('#changePassBtn');
 const passModal     = $('#passModal');
 const oldPass       = $('#oldPass');
@@ -102,20 +87,16 @@ const confirmPass   = $('#confirmPass');
 const savePassBtn   = $('#savePass');
 const cancelPass    = $('#cancelPass');
 
-// ---- Başlat ----
 function init(){
-  // Oturumu yükle (varsa)
   const savedUser = localStorage.getItem(STORAGE_USER);
   if(savedUser){ currentUser = JSON.parse(savedUser); }
 
   initSideLists();
 
-  // Kanal butonları (#public)
   $$('#leftPane [data-kind="channel"]').forEach(btn=>{
     btn.addEventListener('click', ()=> switchTo({type:'channel', id: btn.dataset.id}));
   });
 
-  // Logout
   if (logoutBtn) {
     logoutBtn.addEventListener('click', ()=>{
       currentUser = null;
@@ -125,7 +106,6 @@ function init(){
     });
   }
 
-  // Mesaj silme — genel delegasyon
   document.addEventListener('click', (e)=>{
     const btn = e.target.closest('.delete-btn');
     if(!btn) return;
@@ -135,7 +115,6 @@ function init(){
     }
   });
 
-  // Şifre değiştirme butonu (dashboard)
   if (changeBtn && passModal) {
     changeBtn.addEventListener('click', ()=>{
       if(!currentUser){ alert('Please login first.'); return; }
@@ -171,7 +150,6 @@ function init(){
     });
   }
 
-  // Başka sekmede public/kullanıcılar değişirse
   window.addEventListener('storage', (e)=>{
     if(e.key === STORAGE_DB){
       DB = loadDB();
@@ -183,13 +161,11 @@ function init(){
     }
   });
 
-  // Compose yetkileri & varsayılan görünüm
   updateComposer();
   switchTo({type:'channel', id:'public'});
 }
 
 function initSideLists(){
-  // Sol panel: kullanıcı listesi
   if (userList) {
     userList.innerHTML = '';
     USERS.forEach(u=>{
@@ -203,13 +179,11 @@ function initSideLists(){
     });
   }
 
-  // DM hedef select
   if (dmTarget) {
     dmTarget.innerHTML = USERS.map(u=>`<option value="${u.id}">${u.name}</option>`).join('');
   }
 }
 
-// ---- Konuşma Değiştir ----
 function switchTo(conv){
   currentConversation = conv;
 
@@ -238,7 +212,6 @@ function switchTo(conv){
   render();
 }
 
-// ---- Çizim ----
 render();
 
 function render(){
@@ -278,10 +251,9 @@ function renderRow(m){
   messagesEl.appendChild(row);
 }
 
-// ---- Veri Sağlayıcılar ----
 function getMessagesFor(conv){
   if(conv.type==='channel'){
-    return DB.channels.public || []; // GUEST de okuyabilir
+    return DB.channels.public || []; 
   } else {
     if(!currentUser) return [];
     const k = pair(currentUser.id, conv.id);
@@ -289,14 +261,12 @@ function getMessagesFor(conv){
   }
 }
 
-// ---- Compose Yetkileri ----
-// GUEST public yazabilsin; DM & visibility sadece login
 function updateComposer(){
   const authed = !!currentUser;
 
-  if (composerInput) composerInput.disabled = false; // GUEST de yazabilsin
-  if (sendBtn)       sendBtn.disabled       = false; // GUEST gönderebilsin
-  if (visibility)    visibility.disabled    = !authed; // DM seçimi için login şart
+  if (composerInput) composerInput.disabled = false;
+  if (sendBtn)       sendBtn.disabled       = false; 
+  if (visibility)    visibility.disabled    = !authed; 
   if (dmTarget)      dmTarget.disabled      = !authed;
 
   if (composeHint) composeHint.textContent = authed 
@@ -307,38 +277,30 @@ function updateComposer(){
   if (logoutBtn)   logoutBtn.classList.toggle('hide', !authed);
 }
 
-// ---- Gönderme ----
 if (sendBtn) {
   sendBtn.addEventListener('click', ()=>{
     const text = (composerInput?.value || '').trim();
     if(!text){ alert('Message cannot be empty.'); return; }
 
-    const vis = visibility?.value || 'public'; // public | dm
-
-    // Guest sadece public'e yazabilir
+    const vis = visibility?.value || 'public';
     if(!currentUser && vis !== 'public'){
       alert('Guests can only write in the public channel.');
       return;
     }
 
-    // Gönderen kim?
     let authorId;
     if(currentUser){
       authorId = currentUser.id;
     } else {
       authorId = 'guest';
-      // Guest kullanıcı görünmesi için USERS listesine tek seferlik ekle
       if(!USERS.find(u=>u.id==='guest')){
         USERS.push({ id:'guest', name:'Guest' });
-        // dmTarget/userList'e eklenmesini İSTEMİYORUZ, o yüzden saveUsers çağırmıyoruz.
-        // (Guest DM yapamaz, sadece public)
       }
     }
 
     if(vis==='public'){
       DB.channels.public.push(msg(authorId, text, 'public'));
     } else {
-      // DM: sadece login kullanıcı
       const to = dmTarget.value;
       const k  = pair(currentUser.id, to);
       DB.dms[k] = DB.dms[k] || [];
@@ -351,9 +313,7 @@ if (sendBtn) {
   });
 }
 
-// ---- Silme ----
-// Not: Silme işlemi SADECE login kullanıcıların kendi mesajlarında görünür.
-// (Guest için doğrulanabilir bir kimlik yok; bu yüzden guest mesajlarında sil butonu çıkmaz.)
+
 function deleteMessage(messageId){
   if(!currentUser) return;
 
@@ -370,6 +330,5 @@ function deleteMessage(messageId){
   render();
 }
 
-// ---- Çalıştır (DOMContentLoaded güvenli) ----
 if (document.readyState !== 'loading') init();
 else document.addEventListener('DOMContentLoaded', init);
