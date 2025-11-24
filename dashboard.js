@@ -1,8 +1,6 @@
-// ---- Config / Storage keys
 const STORAGE_USER = 'nexus-chat-v3-user';
 const STORAGE_DB   = 'nexus-chat-v3-store';
 
-// ---- Demo users
 const USERS = [
   { id:'u1', name:'Alice',   password:'Pass!Alice42' },
   { id:'u2', name:'Bob',     password:'Pass!Bob42' },
@@ -10,11 +8,9 @@ const USERS = [
   { id:'u4', name:'Diana',   password:'Pass!Diana42' },
 ];
 
-// ---- State
 let currentUser = null;                       // {id,name}
 let currentConversation = { type:'channel', id:'public' };  // 'channel'|'dm'|'inbox'
 
-// ---- Seed data (public & some DMs)
 const seed = {
   channels: {
     public: [
@@ -29,7 +25,6 @@ const seed = {
   }
 };
 
-// ---- Helpers
 const $  = (s,el=document)=>el.querySelector(s);
 const $$ = (s,el=document)=>Array.from(el.querySelectorAll(s));
 function pair(a,b){ return [a,b].sort().join('-'); }
@@ -41,10 +36,8 @@ function escapeHtml(s){ return s.replace(/[&<>\"']/g, m=>({'&':'&amp;','<':'&lt;
 function loadDB(){ const raw=localStorage.getItem(STORAGE_DB); return raw? JSON.parse(raw): seed; }
 function saveDB(db){ localStorage.setItem(STORAGE_DB, JSON.stringify(db)); }
 
-// ---- DB
 let DB = loadDB();
 
-// ---- UI refs
 const userState   = $('#userState');
 const logoutBtn   = $('#logoutBtn');
 const userList    = $('#userList');
@@ -57,21 +50,17 @@ const visibility  = $('#visibility');
 const dmTarget    = $('#dmTarget');
 const welcome     = $('#welcome');
 
-// ---- Init
 function init(){
-  // ensure logged-in
   const saved = localStorage.getItem(STORAGE_USER);
   if(!saved){
-    // not logged in -> back to login
     window.location.href = 'login.html';
     return;
   }
   currentUser = JSON.parse(saved);
   userState.textContent = `User: ${currentUser.name}`;
 
-  // fill dm target and users list
   dmTarget.innerHTML = USERS
-    .filter(u=>u.id!==currentUser.id) // kendini çıkar
+    .filter(u=>u.id!==currentUser.id) 
     .map(u=>`<option value="${u.id}">${u.name}</option>`).join('');
 
   userList.innerHTML = '';
@@ -96,7 +85,6 @@ function init(){
     window.location.href = 'login.html';
   });
 
-  // default view: inbox (kullanıcı hissi)
   switchTo({type:'inbox'});
   renderWelcome();
 }
@@ -140,7 +128,6 @@ function render(){
     myThreads.forEach(k=>{
       list = list.concat(DB.dms[k]);
     });
-    // sadece DM’ler
     list = list.filter(m=>m.scope==='dm').slice(-30);
   }
 
@@ -166,15 +153,12 @@ function render(){
   messagesEl.scrollTop = messagesEl.scrollHeight;
 }
 
-// composer
 sendBtn.addEventListener('click', ()=>{
   const text = composer.value.trim();
   if(!text){ alert('Message cannot be empty.'); return; }
-  const vis = visibility.value; // public | dm
-
+  const vis = visibility.value;
   if(vis==='public'){
     DB.channels.public.push(msg(currentUser.id, text, 'public'));
-    // eğer public görünmüyorsa kullanıcıya hissettir:
     if(currentConversation.type!=='channel'){ switchTo({type:'channel', id:'public'}); }
   } else {
     const to = dmTarget.value;
@@ -182,7 +166,6 @@ sendBtn.addEventListener('click', ()=>{
     const k = pair(currentUser.id, to);
     DB.dms[k] = DB.dms[k] || [];
     DB.dms[k].push(msg(currentUser.id, text, 'dm'));
-    // DM sayfasında değilsen, karşı tarafa geçtiğin DM’i açalım:
     if(!(currentConversation.type==='dm' && currentConversation.id===to)){
       switchTo({type:'dm', id: to});
     } else {
@@ -194,5 +177,4 @@ sendBtn.addEventListener('click', ()=>{
   composer.value='';
 });
 
-// go!
 init();
